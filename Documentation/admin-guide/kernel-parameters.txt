@@ -659,6 +659,10 @@
 	cpuidle.off=1	[CPU_IDLE]
 			disable the cpuidle sub-system
 
+	cpuidle.use_deepest=Y	[CPU_IDLE]
+			Ignore cpuidle governor, always choose deepest
+			PM_QOS-legal CPU idle power saving state.
+
 	cpufreq.off=1	[CPU_FREQ]
 			disable the cpufreq sub-system
 

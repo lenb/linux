@@ -167,16 +167,32 @@ static void cpuidle_idle_call(void)
 	 * until a proper wakeup interrupt happens.
 	 */
 
-	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
-		if (idle_should_enter_s2idle()) {
-			entered_state = cpuidle_enter_s2idle(drv, dev);
-			if (entered_state > 0) {
-				local_irq_enable();
-				goto exit_idle;
-			}
+	if (idle_should_enter_s2idle()) {
+		entered_state = cpuidle_enter_s2idle(drv, dev);
+		if (entered_state > 0) {
+			local_irq_enable();
+			goto exit_idle;
 		}
+	}
 
+	/*
+	 * cpuidle_dev->user_deepest_state is per-device, and thus per-CPU.
+	 * it is used to force power-savings, and thus does not obey PM_QOS.
+	 */
+
+	if (dev->use_deepest_state) {
 		next_state = cpuidle_find_deepest_state(drv, dev);
+		call_cpuidle(drv, dev, next_state);
+	}
+
+	/*
+	 * cpuidle_using_deepest_state() is system-wide, applying to all CPUs.
+	 * When activated, Linux gives the hardware permission to go as deep
+	 * as PM_QOS allows.
+	 */
+
+	else if (cpuidle_using_deepest_state()) {
+		next_state = cpuidle_find_deepest_state_qos(drv, dev);
 		call_cpuidle(drv, dev, next_state);
 	} else {
 		/*

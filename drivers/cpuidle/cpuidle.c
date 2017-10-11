@@ -34,6 +34,7 @@ LIST_HEAD(cpuidle_detected_devices);
 
 static int enabled_devices;
 static int off __read_mostly;
+static bool use_deepest __read_mostly;
 static int initialized __read_mostly;
 
 int cpuidle_disabled(void)
@@ -116,6 +117,10 @@ void cpuidle_use_deepest_state(bool enable)
 	preempt_enable();
 }
 
+bool cpuidle_using_deepest_state(void)
+{
+	return use_deepest;
+}
 /**
  * cpuidle_find_deepest_state - Find the deepest available idle state.
  * @drv: cpuidle driver for the given CPU.
@@ -125,6 +130,19 @@ int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
 			       struct cpuidle_device *dev)
 {
 	return find_deepest_state(drv, dev, UINT_MAX, 0, false);
+}
+
+/**
+ * cpuidle_find_deepest_state_qos - Find the deepest available idle state.
+ * @drv: cpuidle driver for the given CPU.
+ * @dev: cpuidle device for the given CPU.
+ * Honors PM_QOS
+ */
+int cpuidle_find_deepest_state_qos(struct cpuidle_driver *drv,
+			       struct cpuidle_device *dev)
+{
+	return find_deepest_state(drv, dev,
+			pm_qos_request(PM_QOS_CPU_DMA_LATENCY), 0, false);
 }
 
 #ifdef CONFIG_SUSPEND
@@ -681,4 +699,5 @@ static int __init cpuidle_init(void)
 }
 
 module_param(off, int, 0444);
+module_param(use_deepest, bool, 0644);
 core_initcall(cpuidle_init);
