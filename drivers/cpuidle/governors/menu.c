@@ -22,6 +22,7 @@
 #include <linux/sched/stat.h>
 #include <linux/math64.h>
 #include <linux/cpu.h>
+#include <linux/module.h>
 
 /*
  * Please note when changing the tuning values:
@@ -132,6 +133,7 @@ struct menu_device {
 	int		interval_ptr;
 };
 
+static int lenb_hack;
 
 #define LOAD_INT(x) ((x) >> FSHIFT)
 #define LOAD_FRAC(x) LOAD_INT(((x) & (FIXED_1-1)) * 100)
@@ -205,6 +207,8 @@ static unsigned int get_typical_interval(struct menu_device *data)
 	uint64_t sum, variance;
 
 	thresh = UINT_MAX; /* Discard outliers above this value */
+	if (lenb_hack == 1)
+		return UINT_MAX;
 
 again:
 
@@ -268,6 +272,7 @@ again:
 	 * This can deal with workloads that have long pauses interspersed
 	 * with sporadic activity with a bunch of short pauses.
 	 */
+	if (lenb_hack != 2)
 	if ((divisor * 4) <= INTERVALS * 3)
 		return UINT_MAX;
 
@@ -510,3 +515,5 @@ static int __init init_menu(void)
 }
 
 postcore_initcall(init_menu);
+module_param(lenb_hack, int, 0644);
+
