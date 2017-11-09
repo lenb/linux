@@ -115,6 +115,17 @@ static void early_init_intel(struct cpuinfo_x86 *c)
 		}
 	}
 
+	/* lenb debug hack to force enable MONITOR/MWAIT on BDW-E */
+	if ((c->x86 == 6 && c->x86_model == 0x4F)) {
+		rdmsrl(MSR_IA32_MISC_ENABLE, misc_enable);
+
+		printk("lenb idle hack: MSR_IA32_MISC_ENABLE 0x%x (%sMWAIT)\n", misc_enable,
+			(misc_enable & MSR_IA32_MISC_ENABLE_MWAIT) ? "" : "No-");
+
+		msr_set_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_MWAIT_BIT);
+		set_cpu_cap(c, X86_FEATURE_MWAIT);
+	}
+
 	if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
 		(c->x86 == 0x6 && c->x86_model >= 0x0e))
 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
