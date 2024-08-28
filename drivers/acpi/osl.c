@@ -605,14 +605,20 @@ acpi_status acpi_os_remove_interrupt_handler(u32 gsi, acpi_osd_handler handler)
  * Running in interpreter thread context, safe to sleep
  */
 
+#include <linux/moduleparam.h>
+unsigned int one_ms_timer_hack;
+module_param(one_ms_timer_hack, uint, 0644);
+
 void acpi_os_sleep(u64 ms)
 {
 	u64 us = ms * 1000;
 
-	if (us <= 20000)
+	if (us == 1000)
+		us += one_ms_timer_hack;
+	if (us <= 100000)
 		usleep_range(us, us);
 	else
-		usleep_range(us, us + 1000);
+		msleep(ms);
 
 }
 
