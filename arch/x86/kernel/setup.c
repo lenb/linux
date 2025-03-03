@@ -1310,6 +1310,6 @@ __initcall(register_kernel_offset_dumper);
 #ifdef CONFIG_HOTPLUG_CPU
 bool arch_cpu_is_hotpluggable(int cpu)
 {
-	return cpu > 0;
+	return true;
 }
 #endif /* CONFIG_HOTPLUG_CPU */

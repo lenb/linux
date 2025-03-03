@@ -53,6 +53,11 @@ static int cpu_subsys_online(struct device *dev)
 	int ret;
 	int retries = 0;
 
+	if (cpuid == 0) {
+		dev_err(dev, "hotplug enable not supported");
+		return -EBUSY;
+	}
+
 	from_nid = cpu_to_node(cpuid);
 	if (from_nid == NUMA_NO_NODE)
 		return -ENODEV;
