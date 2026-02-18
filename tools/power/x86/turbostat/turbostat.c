@@ -5164,7 +5164,7 @@ static inline int get_rapl_domain_id(int cpu)
 	if (!platform->has_per_core_rapl)
 		return cpus[cpu].package_id;
 
-	return GLOBAL_CORE_ID(cpu, cpus[cpu].package_id);
+	return GLOBAL_CORE_ID(cpus[cpu].core_id, cpus[cpu].package_id);
 }
 
 /*
