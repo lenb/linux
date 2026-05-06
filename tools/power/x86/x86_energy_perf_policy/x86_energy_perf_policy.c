@@ -532,7 +532,7 @@ void for_packages(unsigned long long pkg_set, int (func) (int))
 {
 	int pkg_num;
 
-	for (pkg_num = 0; pkg_num <= max_pkg_num; ++pkg_num) {
+	for (pkg_num = 0; pkg_num <= max_pkg_num && pkg_num < MAX_PACKAGES; ++pkg_num) {
 		if (pkg_set & (1UL << pkg_num))
 			func(pkg_num);
 	}
