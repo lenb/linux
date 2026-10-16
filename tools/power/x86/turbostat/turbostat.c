@@ -399,6 +399,11 @@ static void bic_groups_init(void)
 	SET_BIC(BIC_CorWatt, &bic_group_thermal_pwr);
 	SET_BIC(BIC_GFXWatt, &bic_group_thermal_pwr);
 	SET_BIC(BIC_RAMWatt, &bic_group_thermal_pwr);
+	SET_BIC(BIC_Pkg_J, &bic_group_thermal_pwr);
+	SET_BIC(BIC_Cor_J, &bic_group_thermal_pwr);
+	SET_BIC(BIC_GFX_J, &bic_group_thermal_pwr);
+	SET_BIC(BIC_RAM_J, &bic_group_thermal_pwr);
+	SET_BIC(BIC_Sys_J, &bic_group_thermal_pwr);
 	SET_BIC(BIC_PKG__, &bic_group_thermal_pwr);
 	SET_BIC(BIC_RAM__, &bic_group_thermal_pwr);
 	SET_BIC(BIC_SysWatt, &bic_group_thermal_pwr);
